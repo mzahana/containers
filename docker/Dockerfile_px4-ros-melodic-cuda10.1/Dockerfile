@@ -8,6 +8,8 @@ LABEL maintainer="Mohamed Abdelkader <mohamedashraf123@gmail.com>"
 ENV DEBIAN_FRONTEND noninteractive
 ENV ARROW_HOME /home/arrow
 
+USER arrow
+
 RUN if [ ! -d "$ARROW_HOME/src" ]; then \
     mkdir -p $ARROW_HOME/src; fi
 
