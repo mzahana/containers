@@ -9,7 +9,7 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV ARROW_HOME /home/arrow
 
 RUN if [ ! -d "$ARROW_HOME/src" ]; then
-    mkdir src; fi
+    mkdir -p $ARROW_HOME/src; fi
 
 RUN if [ ! -d "$ARROW_HOME/src/containers" ]; then
     cd $ARROW_HOME/src && \
