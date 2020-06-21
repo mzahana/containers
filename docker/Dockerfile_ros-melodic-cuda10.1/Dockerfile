@@ -77,6 +77,8 @@ RUN wget --quiet http://packages.osrfoundation.org/gazebo.key -O - | apt-key add
 	&& pip3 install --upgrade pyulog matplotlib \
 	&& rm -rf /var/lib/apt/lists/{apt,dpkg,cache,log} /tmp/* /var/tmp/*
 
+RUN echo "source /opt/ros/melodic/setup.bash" >> /home/arrow/.bashrc
+
 RUN pip install Shapely Pillow MapProxy uwsgi
 # ADD mapproxy.yaml /mapproxy.yaml
 

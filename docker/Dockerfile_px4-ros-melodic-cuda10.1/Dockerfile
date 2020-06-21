@@ -20,6 +20,6 @@ RUN if [ ! -d "$ARROW_HOME/src/containers" ]; then \
     && echo "Cloning and building PX4 v1.10.1 ..." \
     && ./setup_px4.sh; fi
 
-RUN echo arrow | sudo -S chown -R arrow:arrow /home/arrow
+#RUN echo arrow | sudo -S chown -R arrow:arrow /home/arrow
     
 
