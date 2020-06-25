@@ -99,6 +99,7 @@ docker run -it \
     --workdir="/home/$USER_NAME" \
     --name=${CONTAINER_NAME} \
     --privileged \
+    -p 14570:14570/udp \
     $DOCKER_OPTS \
     ${DOCKER_REPO} \
     bash
