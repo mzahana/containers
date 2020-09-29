@@ -92,7 +92,7 @@ RUN update-alternatives --set python3 /usr/bin/python3.7
 # Requirements for Dynonet package
 RUN pip3 install numpy scipy pandas matplotlib setuptools
 RUN pip3 install control
-RUN pip3 install torch==1.4.0 torchvision==0.5.0
+RUN pip3 install torch==1.4.0 torchvision==0.5.0 --no-cache-dir
 
 
 # Create user torch with id 1000 with sudo access
