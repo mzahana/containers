@@ -77,6 +77,7 @@ RUN cd $ARROW_HOME/catkin_ws/src \
     && cd semantic_based_exploration \
     && git checkout pre_release \
     && cd install \
-    && ./setup_semantic_mapping.sh 1
+    && ./setup_semantic_mapping.sh 1 \
+    && cd $ARROW_HOME/catkin_ws && catkin build
 
 CMD ["/bin/bash"]
