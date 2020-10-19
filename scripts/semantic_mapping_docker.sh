@@ -102,7 +102,7 @@ docker run -it \
     --privileged \
     $DOCKER_OPTS \
     ${DOCKER_REPO} \
-    bash
+    bash -c "cd ~/catkin_ws && catkin build && cd && source .bashrc && /bin/bash"
 fi
    
 xhost -local:root
