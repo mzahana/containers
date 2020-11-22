@@ -66,11 +66,20 @@ echo
 echo "Installing PX4 Python3 dependencies"
 pip3 install --user -r ${DIR}/px4_requirements.txt
 
+# Simulation dependencies
+echo "arrow" | sudo -S DEBIAN_FRONTEND=noninteractive apt-get -y --quiet --no-install-recommends install \
+		ant \
+		openjdk-11-jre \
+		openjdk-11-jdk \
+		libvecmath-java \
+		;
+
 echo "arrow" | sudo -S DEBIAN_FRONTEND=noninteractive apt-get -y --quiet --no-install-recommends install \
 		gstreamer1.0-plugins-bad \
 		gstreamer1.0-plugins-base \
 		gstreamer1.0-plugins-good \
 		gstreamer1.0-plugins-ugly \
+		gstreamer1.0-libav \
 		libeigen3-dev \
 		libgazebo9-dev \
 		libgstreamer-plugins-base1.0-dev \
@@ -79,13 +88,16 @@ echo "arrow" | sudo -S DEBIAN_FRONTEND=noninteractive apt-get -y --quiet --no-in
 		libxml2-utils \
 		pkg-config \
 		protobuf-compiler \
+		dmidecode \
+		bc \
 		;
 
+	sudo update-alternatives --set java $(update-alternatives --list java | grep "java-11")
 
 #Setting up PX4 Firmware
 if [ ! -d "${HOME}/Firmware" ]; then
     cd ${HOME}
-    git clone https://github.com/PX4/Firmware
+    git clone https://github.com/PX4/Firmware.git --recursive
 else
     echo "Firmware already exists. Just pulling latest upstream...."
     cd ${HOME}/Firmware
@@ -93,16 +105,15 @@ else
 fi
 cd ${HOME}/Firmware
 make clean && make distclean
-git checkout v1.11.2 && git submodule init && git submodule update --recursive
+git checkout v1.10.1 && git submodule init && git submodule update --recursive
 
-### Uncomment the following if you you use PX4 v1.10.1
-#cd ${HOME}/Firmware/Tools/sitl_gazebo/external/OpticalFlow
-#git submodule init && git submodule update --recursive
-#cd ${HOME}/Firmware/Tools/sitl_gazebo/external/OpticalFlow/external/klt_feature_tracker
-#git submodule init && git submodule update --recursive
+cd ${HOME}/Firmware/Tools/sitl_gazebo/external/OpticalFlow
+git submodule init && git submodule update --recursive
+cd ${HOME}/Firmware/Tools/sitl_gazebo/external/OpticalFlow/external/klt_feature_tracker
+git submodule init && git submodule update --recursive
 #### NOTE: in PX4 v1.10.1, there is a bug in Firmware/Tools/sitl_gazebo/include/gazebo_opticalflow_plugin.h:43:18
 #### NOTE  #define HAS_GYRO TRUE needs to be replaced by #define HAS_GYRO true
-#sed -i 's/#define HAS_GYRO.*/#define HAS_GYRO true/' ${HOME}/Firmware/Tools/sitl_gazebo/include/gazebo_opticalflow_plugin.h
+sed -i 's/#define HAS_GYRO.*/#define HAS_GYRO true/' ${HOME}/Firmware/Tools/sitl_gazebo/include/gazebo_opticalflow_plugin.h
 
 cd ${HOME}/Firmware
 DONT_RUN=1 make px4_sitl gazebo
