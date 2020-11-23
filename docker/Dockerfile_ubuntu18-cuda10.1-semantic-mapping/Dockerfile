@@ -6,14 +6,6 @@ ENV ARROW_HOME /home/arrow
 
 USER arrow
 
-RUN echo "arrow" | sudo -S apt-get update && sudo apt-get -y --quiet --no-install-recommends install software-properties-common apt-utils
-
-# For VS Code
-RUN echo "arrow" | sudo -S apt-get update && wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | sudo apt-key add -
-RUN echo "arrow" | sudo -S add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main"
-RUN echo "arrow" | sudo -S apt-get update
-RUN echo "arrow" | sudo -S apt-get -y --quiet install code libgbm-dev
-
 RUN pip install --upgrade pip
 # Prerequisites for kers-segmentation
 RUN pip install opencv-python==4.2.0.32
@@ -56,14 +48,6 @@ RUN cd $ARROW_HOME/src \
     && cd .. \
     && echo "arrow" | sudo -S python setup.py install
 
-# catkin_ws
-RUN mkdir -p $ARROW_HOME/catkin_ws/src && echo "arrow" | sudo -S chown -R arrow $ARROW_HOME/catkin_ws \
-    && cd ~/catkin_ws \
-    && catkin init \
-    && catkin config --cmake-args -DCMAKE_BUILD_TYPE=Release \
-    && catkin config --merge-devel \
-    && catkin config --extend /opt/ros/$ROS_DISTRO \
-    && catkin build
 
 # Clonning semantic_hazard_cloud
 RUN cd $ARROW_HOME/catkin_ws/src \
