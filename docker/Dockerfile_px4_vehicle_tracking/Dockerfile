@@ -15,7 +15,7 @@ RUN echo "arrow" | sudo -S apt-get update
 RUN echo "arrow" | sudo -S apt-get -y --quiet install code libgbm-dev
 
 # catkin_ws
-RUN mkdir -p $ARROW_HOME/catkin_ws/src && echo "arrow" | sudo -S chown -R arrow $ARROW_HOME/catkin_ws \
+RUN mkdir -p $ARROW_HOME/catkin_ws/src && echo "arrow" | sudo -S chown -R arrow:arrow $ARROW_HOME/catkin_ws \
     && cd ~/catkin_ws \
     && catkin init \
     && catkin config --cmake-args -DCMAKE_BUILD_TYPE=Release \

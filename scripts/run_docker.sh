@@ -7,11 +7,12 @@
 # Optional:
 #   - device mounting such as: joystick mounted to /dev/input/js0
 #
-# Authors: Mohammed Abdelkader
+# Authors: Tarek Taha, Mohammed Abdelkader
  
 DOCKER_REPO="mzahana/px4-ros-melodic-cuda10.1:latest"
+#DOCKER_REPO="mzahana/ros-melodic-sim-cudagl-dev-env-10.1:latest"
 CONTAINER_NAME="px4"
-WORKSPACE_DIR=~/catkin_ws
+WORKSPACE_DIR=~/${CONTAINER_NAME}_shared_volume
 CMD=""
 DOCKER_OPTS=
 
@@ -38,7 +39,7 @@ fi
 # It will create a local workspace and link it to the image's catkin_ws
 if [ "$1" != "" ]; then
     CONTAINER_NAME=$1
-    WORKSPACE_DIR=~/$1_ws
+    WORKSPACE_DIR=~/$1_shared_volume
     if [ ! -d $WORKSPACE_DIR ]; then
         mkdir -p $WORKSPACE_DIR
     fi
@@ -86,23 +87,23 @@ if [ "$(docker ps -aq -f name=${CONTAINER_NAME})" ]; then
 else
 echo "Running container ${CONTAINER_NAME}..."
 #-v /dev/video0:/dev/video0 \
+#    -p 14570:14570/udp \
 docker run -it \
     --user=$USER_NAME \
     --env="DISPLAY=$DISPLAY" \
     --env="QT_X11_NO_MITSHM=1" \
     --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
     --volume="/etc/localtime:/etc/localtime:ro" \
-    --volume="$WORKSPACE_DIR:/home/$USER_NAME/catkin_ws:rw" \
+    --volume="$WORKSPACE_DIR:/home/$USER_NAME/shared_volume:rw" \
     --volume="/dev/input:/dev/input" \
     --volume="$XAUTH:$XAUTH" \
     -env="XAUTHORITY=$XAUTH" \
     --workdir="/home/$USER_NAME" \
     --name=${CONTAINER_NAME} \
     --privileged \
-    -p 14570:14570/udp \
     $DOCKER_OPTS \
     ${DOCKER_REPO} \
-    bash
+    bash #-c "cd ~/catkin_ws && catkin build minkindr_conversions && catkin build && cd && source .bashrc && /bin/bash"
 fi
    
 xhost -local:root
