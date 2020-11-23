@@ -72,6 +72,7 @@ echo "arrow" | sudo -S DEBIAN_FRONTEND=noninteractive apt-get -y --quiet --no-in
 		openjdk-11-jre \
 		openjdk-11-jdk \
 		libvecmath-java \
+		xmlstarlet \
 		;
 
 echo "arrow" | sudo -S DEBIAN_FRONTEND=noninteractive apt-get -y --quiet --no-install-recommends install \
