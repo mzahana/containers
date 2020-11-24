@@ -141,6 +141,7 @@ echo $pass | sudo -S apt-get remove modemmanager -y
 echo $pass | sudo -S apt-get install gstreamer1.0-plugins-bad gstreamer1.0-libav gstreamer1.0-gl -y
 
 wget https://s3-us-west-2.amazonaws.com/qgroundcontrol/latest/QGroundControl.AppImage
+chmod +x ./QGroundControl.AppImage
 
 echo "**** Make sure to logout and login again ****"
 
