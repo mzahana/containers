@@ -10,15 +10,22 @@ if [ -z "$1" ]; then
     ARROW_HOME=$HOME
 else
     ARROW_HOME=$1
+fi	
+
+if [ -f /.dockerenv ]; then
+	pass=arrow
+	echo "Running within docker, installing initial dependencies";
+	echo pass | sudo -S apt-get --quiet -y update && DEBIAN_FRONTEND=noninteractive apt-get --quiet -y install \
+		ca-certificates \
+		gnupg \
+		lsb-core \
+		sudo \
+		wget \
+		;
+else
+	read -p "Enter user password please (for sudo): " -s pass
 fi
 
-# Installing initial dependencies
-echo "arrow" | sudo -S apt --quiet -y install \
-    ca-certificates \
-    gnupg \
-    lsb-core \
-    wget \
-    ;
 # script directory
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
@@ -31,8 +38,8 @@ fi
 
 echo "Installing PX4 general dependencies"
 
-echo "arrow" | sudo -S apt-get update -y --quiet
-echo "arrow" | sudo -S DEBIAN_FRONTEND=noninteractive apt-get -y --quiet --no-install-recommends install \
+echo $pass | sudo -S apt-get update -y --quiet
+echo $pass | sudo -S DEBIAN_FRONTEND=noninteractive apt-get -y --quiet --no-install-recommends install \
 	astyle \
 	build-essential \
 	ccache \
@@ -67,14 +74,14 @@ echo "Installing PX4 Python3 dependencies"
 pip3 install --user -r ${DIR}/px4_requirements.txt
 
 # Simulation dependencies
-echo "arrow" | sudo -S DEBIAN_FRONTEND=noninteractive apt-get -y --quiet --no-install-recommends install \
+echo $pass | sudo -S DEBIAN_FRONTEND=noninteractive apt-get -y --quiet --no-install-recommends install \
 		ant \
 		openjdk-11-jre \
 		openjdk-11-jdk \
 		libvecmath-java \
 		;
 
-echo "arrow" | sudo -S DEBIAN_FRONTEND=noninteractive apt-get -y --quiet --no-install-recommends install \
+echo $pass | sudo -S DEBIAN_FRONTEND=noninteractive apt-get -y --quiet --no-install-recommends install \
 		gstreamer1.0-plugins-bad \
 		gstreamer1.0-plugins-base \
 		gstreamer1.0-plugins-good \
@@ -92,7 +99,7 @@ echo "arrow" | sudo -S DEBIAN_FRONTEND=noninteractive apt-get -y --quiet --no-in
 		bc \
 		;
 
-	sudo update-alternatives --set java $(update-alternatives --list java | grep "java-11")
+echo $pass | sudo -S update-alternatives --set java $(update-alternatives --list java | grep "java-11")
 
 #Setting up PX4 Firmware
 if [ ! -d "${HOME}/Firmware" ]; then
@@ -105,12 +112,12 @@ else
 fi
 cd ${HOME}/Firmware
 make clean && make distclean
-git checkout v1.10.1 && git submodule init && git submodule update --recursive
+git checkout v1.10.1  && git submodule update --recursive
 
 cd ${HOME}/Firmware/Tools/sitl_gazebo/external/OpticalFlow
-git submodule init && git submodule update --recursive
+git submodule update --recursive
 cd ${HOME}/Firmware/Tools/sitl_gazebo/external/OpticalFlow/external/klt_feature_tracker
-git submodule init && git submodule update --recursive
+git submodule update --recursive
 #### NOTE: in PX4 v1.10.1, there is a bug in Firmware/Tools/sitl_gazebo/include/gazebo_opticalflow_plugin.h:43:18
 #### NOTE  #define HAS_GYRO TRUE needs to be replaced by #define HAS_GYRO true
 sed -i 's/#define HAS_GYRO.*/#define HAS_GYRO true/' ${HOME}/Firmware/Tools/sitl_gazebo/include/gazebo_opticalflow_plugin.h
