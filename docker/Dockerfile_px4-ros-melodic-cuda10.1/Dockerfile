@@ -1,5 +1,5 @@
 #
-# ROS + Gazebo + PX4 development environment
+# ROS Melodic + Gazebo 9 + PX4 development environment
 #
 
 FROM mzahana/ros-melodic-cuda10.1:latest
@@ -10,6 +10,32 @@ ENV ARROW_HOME /home/arrow
 
 
 
+RUN echo "arrow" | sudo -S apt-get update && sudo apt-get -y --quiet --no-install-recommends install software-properties-common apt-utils
+
+# Insatll VS Code for easy code development
+RUN echo "arrow" | sudo -S apt-get update && wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | sudo apt-key add -
+RUN echo "arrow" | sudo -S add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main"
+RUN echo "arrow" | sudo -S apt-get update
+RUN echo "arrow" | sudo -S apt-get -y --quiet install code libgbm-dev
+
+# Create & build catkin_ws
+RUN mkdir -p $ARROW_HOME/catkin_ws/src \
+    && echo "arrow" | sudo -S chown -R arrow:arrow $ARROW_HOME/catkin_ws \
+    && cd ~/catkin_ws \
+    && catkin init \
+    && catkin config --cmake-args -DCMAKE_BUILD_TYPE=Release \
+    && catkin config --merge-devel \
+    && catkin config --extend /opt/ros/$ROS_DISTRO \
+    && catkin build
+
+# source catkin_ws inside .bashrc
+RUN sed -i '/source ~\/catkin_ws\/devel\/setup.bash/d' $HOME/.bashrc && \
+    sed -i 's+source /opt/ros/melodic/setup.bash+source /opt/ros/melodic/setup.bash\nsource ~/catkin_ws/devel/setup.bash+g' $ARROW_HOME/.bashrc
+
+
+# Install some useful ros tf packages
+RUN echo "arrow" | sudo -S  apt-get install ros-melodic-tf-conversions ros-melodic-rqt-tf-tree -y
+
 RUN if [ ! -d "$ARROW_HOME/src" ]; then \
     mkdir -p $ARROW_HOME/src; fi
 
@@ -19,7 +45,3 @@ RUN if [ ! -d "$ARROW_HOME/src/containers" ]; then \
     && cd $ARROW_HOME/src/containers/scripts \
     && echo "Cloning and building PX4 v1.10.1 ..." \
     && ./setup_px4.sh; fi
-
-#RUN echo arrow | sudo -S chown -R arrow:arrow /home/arrow
-    
-

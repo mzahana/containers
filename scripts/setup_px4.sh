@@ -79,6 +79,7 @@ echo $pass | sudo -S DEBIAN_FRONTEND=noninteractive apt-get -y --quiet --no-inst
 		openjdk-11-jre \
 		openjdk-11-jdk \
 		libvecmath-java \
+		xmlstarlet \
 		;
 
 echo $pass | sudo -S DEBIAN_FRONTEND=noninteractive apt-get -y --quiet --no-install-recommends install \
