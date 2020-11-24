@@ -4,11 +4,11 @@
 
 FROM mzahana/ros-melodic-cuda10.1:latest
 LABEL maintainer="Mohamed Abdelkader <mohamedashraf123@gmail.com>"
-
+USER arrow
 ENV DEBIAN_FRONTEND noninteractive
 ENV ARROW_HOME /home/arrow
 
-USER arrow
+
 
 RUN if [ ! -d "$ARROW_HOME/src" ]; then \
     mkdir -p $ARROW_HOME/src; fi
