@@ -135,3 +135,12 @@ grep -xF 'export GAZEBO_PLUGIN_PATH=$GAZEBO_PLUGIN_PATH:/usr/lib/x86_64-linux-gn
 
 source ${HOME}/.bashrc
 
+# Install QGroundControl
+echo $pass | sudo -S usermod -a -G dialout $USER
+echo $pass | sudo -S apt-get remove modemmanager -y
+echo $pass | sudo -S apt-get install gstreamer1.0-plugins-bad gstreamer1.0-libav gstreamer1.0-gl -y
+
+wget https://s3-us-west-2.amazonaws.com/qgroundcontrol/latest/QGroundControl.AppImage
+
+echo "**** Make sure to logout and login again ****"
+
