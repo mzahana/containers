@@ -80,9 +80,6 @@ RUN pip3 install argparse argcomplete coverage cerberus empy jinja2 \
 		matplotlib==3.0.* numpy pkgconfig pyros-genmsg pyulog pyyaml \
 		requests serial toml pyulog wheel
 
-# manual ccache setup
-RUN ln -s /usr/bin/ccache /usr/lib/ccache/cc \
-	&& ln -s /usr/bin/ccache /usr/lib/ccache/c++
 
 # astyle v2.06
 RUN wget -q https://downloads.sourceforge.net/project/astyle/astyle/astyle%202.06/astyle_2.06_linux.tar.gz -O /tmp/astyle.tar.gz \
@@ -100,6 +97,7 @@ RUN wget -q "https://services.gradle.org/distributions/gradle-5.6.2-bin.zip" -O 
 ENV PATH "/opt/gradle/gradle-5.6.2/bin:$PATH"
 
 # Fast-RTPS
+RUN apt install libssl-dev -y
 RUN git clone --recursive https://github.com/eProsima/Fast-RTPS.git -b 1.8.x /tmp/FastRTPS-1.8.2 \
 	&& cd /tmp/FastRTPS-1.8.2 \
 	&& mkdir build && cd build \
