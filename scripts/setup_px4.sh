@@ -15,7 +15,7 @@ fi
 if [ -f /.dockerenv ]; then
 	pass=arrow
 	echo "Running within docker, installing initial dependencies";
-	echo pass | sudo -S apt-get --quiet -y update && DEBIAN_FRONTEND=noninteractive apt-get --quiet -y install \
+	echo $pass | sudo -S apt-get --quiet -y update && DEBIAN_FRONTEND=noninteractive apt-get --quiet -y install \
 		ca-certificates \
 		gnupg \
 		lsb-core \
