@@ -10,7 +10,7 @@
 # Authors: Mohammed Abdelkader
  
 DOCKER_REPO="mzahana/semantic-risk-mapping:latest"
-CONTAINER_NAME="semantic_mapping"
+CONTAINER_NAME="semantic_risk_mapping"
 WORKSPACE_DIR=~/${CONTAINER_NAME}_shared_volume
 CMD=""
 DOCKER_OPTS=
