@@ -7,7 +7,7 @@ ENV ARROW_HOME /home/arrow
 USER arrow
 
 RUN pip install --upgrade pip
-# Prerequisites for kers-segmentation
+# Prerequisites for keras-segmentation
 RUN pip install opencv-python==4.2.0.32
 RUN pip install Keras==2.3.1
 RUN pip install launchpadlib==1.10.6
