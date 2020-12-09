@@ -34,6 +34,7 @@ then
 else
     DOCKER_OPTS="$DOCKER_OPTS --gpus all"
 fi
+echo "GPU arguments: $DOCKER_OPTS"
 
 # This will enable running containers with different names
 # It will create a local workspace and link it to the image's catkin_ws
@@ -96,6 +97,7 @@ else
       cp -R \${HOME}/catkin_ws/src/surveillance_sim/models/typhoon_h480 \${HOME}/Firmware/Tools/sitl_gazebo/models/ && \
       cd \${HOME}/catkin_ws && catkin build && \
       echo "arrow" | sudo -S chown -R arrow:arrow \${HOME}/shared_volume && \
+      echo 'export GAZEBO_MODEL_PATH=~/catkin_ws/src/surveillance_sim/models:\$GAZEBO_MODEL_PATH' >> ~/.bashrc && \
       cd && source .bashrc && /bin/bash"
 
 echo "Running container ${CONTAINER_NAME}..."
