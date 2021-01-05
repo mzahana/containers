@@ -6,7 +6,7 @@ NC='\033[0m' # No Color
 
 
 echo "Installing Docker ..."
-read -p "Enter user password please: " -s pass
+read -p "Enter user password please, for sudo: " -s pass
 # Source: https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-18-04
 echo $pass | sudo -S apt-get install apt-transport-https ca-certificates curl software-properties-common -y
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
