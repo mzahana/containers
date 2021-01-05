@@ -88,16 +88,22 @@ else
 
 
 # The following command clones surveillance_sim. It gets executed the first time the container is run
- CMD="read -p 'Enter your github ID please: '  gitID && \
-      read -p 'Enter Github password please: ' -s gitPass && \
+ CMD="read -p 'Please enter your github ID: '  gitID && \
+      read -p 'Please enter your Github password: ' -s gitPass && \
       if [ ! -d "\${HOME}/catkin_ws/src/surveillance_sim" ]; then
       cd \${HOME}/catkin_ws/src
       git clone https://\$gitID:\$gitPass@github.com/SystemTrio-Robotics/surveillance_sim.git
       fi && \
       cp -R \${HOME}/catkin_ws/src/surveillance_sim/models/typhoon_h480 \${HOME}/Firmware/Tools/sitl_gazebo/models/ && \
+      cp -R \${HOME}/catkin_ws/src/surveillance_sim/models/typhoon_h480_dual \${HOME}/Firmware/Tools/sitl_gazebo/models/ && \
+      cp \${HOME}/catkin_ws/src/surveillance_sim/config/6011_typhoon_h480 \${HOME}/Firmware/ROMFS/px4fmu_common/init.d-posix/ && \
+      cp \${HOME}/catkin_ws/src/surveillance_sim/config/6011_typhoon_h480.post \${HOME}/Firmware/ROMFS/px4fmu_common/init.d-posix/ && \
+      cp \${HOME}/catkin_ws/src/surveillance_sim/config/6012_typhoon_h480_dual \${HOME}/Firmware/ROMFS/px4fmu_common/init.d-posix/ && \
+      cp \${HOME}/catkin_ws/src/surveillance_sim/config/6012_typhoon_h480_dual.post \${HOME}/Firmware/ROMFS/px4fmu_common/init.d-posix/ && \
       cd \${HOME}/catkin_ws && catkin build && \
       echo "arrow" | sudo -S chown -R arrow:arrow \${HOME}/shared_volume && \
       echo 'export GAZEBO_MODEL_PATH=~/catkin_ws/src/surveillance_sim/models:\$GAZEBO_MODEL_PATH' >> ~/.bashrc && \
+      cd \${HOME}/catkin_ws/src/surveillance_sim/install && ./build_gst_plugins.sh && \
       cd && source .bashrc && /bin/bash"
 
 echo "Running container ${CONTAINER_NAME}..."
