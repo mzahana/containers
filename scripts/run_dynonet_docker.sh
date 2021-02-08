@@ -10,8 +10,8 @@
 # Authors: Mohammed Abdelkader
  
 DOCKER_REPO="mzahana/ubuntu18-cuda10.1-cudnn7-torch1.4:latest"
-CONTAINER_NAME="pytorch1.4"
-WORKSPACE_DIR=~/pytorch_ws
+CONTAINER_NAME="dynonet"
+WORKSPACE_DIR=~/dynonet_ws
 CMD=""
 DOCKER_OPTS=
 
@@ -38,7 +38,7 @@ fi
 # It will create a local workspace and link it to the image's catkin_ws
 if [ "$1" != "" ]; then
     CONTAINER_NAME=$1
-    WORKSPACE_DIR=~/$1_ws
+    WORKSPACE_DIR=~/$1_shared_volume
     if [ ! -d $WORKSPACE_DIR ]; then
         mkdir -p $WORKSPACE_DIR
     fi
@@ -84,6 +84,16 @@ if [ "$(docker ps -aq -f name=${CONTAINER_NAME})" ]; then
         docker exec -it --user $USER_NAME ${CONTAINER_NAME} bash -c "$CMD"
     fi
 else
+
+# The following command clones surveillance_sim. It gets executed the first time the container is run
+ CMD="if [ ! -d "\${HOME}/src" ]; then
+      cd \${HOME} && mkdir src
+      fi && \
+      cd \${HOME}/src && \
+      git clone https://github.com/forgi86/dynonet.git && \
+      echo 'export PYTHONPATH=/home/torch/src/dynonet' >> /home/torch/.bashrc && \
+      cd && source .bashrc && /bin/bash"
+
 echo "Running container ${CONTAINER_NAME}..."
 #-v /dev/video0:/dev/video0 \
 #    -p 14570:14570/udp \
@@ -94,7 +104,7 @@ docker run -it \
     --env="QT_X11_NO_MITSHM=1" \
     --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
     --volume="/etc/localtime:/etc/localtime:ro" \
-    --volume="$WORKSPACE_DIR:/home/$USER_NAME/pytorch_ws:rw" \
+    --volume="$WORKSPACE_DIR:/home/$USER_NAME/shared_volume:rw" \
     --volume="/dev/input:/dev/input" \
     --volume="$XAUTH:$XAUTH" \
     -env="XAUTHORITY=$XAUTH" \
@@ -103,7 +113,7 @@ docker run -it \
     --privileged \
     $DOCKER_OPTS \
     ${DOCKER_REPO} \
-    bash
+    bash -c "${CMD}"
 fi
    
-xhost -local:root
+#xhost -local:root
