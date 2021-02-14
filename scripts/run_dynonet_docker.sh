@@ -1,5 +1,5 @@
  #! /bin/bash
-# Runs a docker container for Autonomous Aerial Lab development
+# Runs a docker container for Pytorch development
 # Requires:
 #   - docker
 #   - nvidia-docker
@@ -7,17 +7,16 @@
 # Optional:
 #   - device mounting such as: joystick mounted to /dev/input/js0
 #
-# Authors: Tarek Taha, Mohammed Abdelkader
+# Authors: Mohammed Abdelkader
  
-#sDOCKER_REPO="mzahana/multi_drone_surveillance_sim:latest"
-DOCKER_REPO="mzahana/px4-ros-melodic-cuda10.1:latest"
-CONTAINER_NAME="surv_sim"
-WORKSPACE_DIR=~/${CONTAINER_NAME}_shared_volume
+DOCKER_REPO="mzahana/ubuntu18-cuda10.1-cudnn7-torch1.4:latest"
+CONTAINER_NAME="dynonet"
+WORKSPACE_DIR=~/dynonet_ws
 CMD=""
 DOCKER_OPTS=
 
 # User name inside container
-USER_NAME=arrow
+USER_NAME=torch
 
 # Get the current version of docker-ce
 # Strip leading stuff before the version number so it can be compared
@@ -34,7 +33,6 @@ then
 else
     DOCKER_OPTS="$DOCKER_OPTS --gpus all"
 fi
-echo "GPU arguments: $DOCKER_OPTS"
 
 # This will enable running containers with different names
 # It will create a local workspace and link it to the image's catkin_ws
@@ -74,36 +72,26 @@ echo "Username:" $USER_NAME
 xhost +local:root
  
 echo "Starting Container: ${CONTAINER_NAME} with REPO: $DOCKER_REPO"
-
+ 
 if [ "$(docker ps -aq -f name=${CONTAINER_NAME})" ]; then
     if [ "$(docker ps -aq -f status=exited -f name=${CONTAINER_NAME})" ]; then
         # cleanup
-        echo "Restarting the container..."
         docker start ${CONTAINER_NAME}
     fi
-
-    docker exec -it --user $USER_NAME ${CONTAINER_NAME} bash
-
+    if [ -z "$CMD" ]; then
+        docker exec -it --user $USER_NAME ${CONTAINER_NAME} bash
+    else
+        docker exec -it --user $USER_NAME ${CONTAINER_NAME} bash -c "$CMD"
+    fi
 else
 
-
 # The following command clones surveillance_sim. It gets executed the first time the container is run
- CMD="read -p 'Please enter your github ID: '  gitID && \
-      read -p 'Please enter your Github password: ' -s gitPass && \
-      if [ ! -d "\${HOME}/catkin_ws/src/surveillance_sim" ]; then
-      cd \${HOME}/catkin_ws/src
-      git clone https://\$gitID:\$gitPass@github.com/SystemTrio-Robotics/surveillance_sim.git
+ CMD="if [ ! -d "\${HOME}/src" ]; then
+      cd \${HOME} && mkdir src
       fi && \
-      cp -R \${HOME}/catkin_ws/src/surveillance_sim/models/typhoon_h480 \${HOME}/Firmware/Tools/sitl_gazebo/models/ && \
-      cp -R \${HOME}/catkin_ws/src/surveillance_sim/models/typhoon_h480_dual \${HOME}/Firmware/Tools/sitl_gazebo/models/ && \
-      cp \${HOME}/catkin_ws/src/surveillance_sim/config/6011_typhoon_h480 \${HOME}/Firmware/ROMFS/px4fmu_common/init.d-posix/ && \
-      cp \${HOME}/catkin_ws/src/surveillance_sim/config/6011_typhoon_h480.post \${HOME}/Firmware/ROMFS/px4fmu_common/init.d-posix/ && \
-      cp \${HOME}/catkin_ws/src/surveillance_sim/config/6012_typhoon_h480_dual \${HOME}/Firmware/ROMFS/px4fmu_common/init.d-posix/ && \
-      cp \${HOME}/catkin_ws/src/surveillance_sim/config/6012_typhoon_h480_dual.post \${HOME}/Firmware/ROMFS/px4fmu_common/init.d-posix/ && \
-      cd \${HOME}/catkin_ws && catkin build && \
-      echo "arrow" | sudo -S chown -R arrow:arrow \${HOME}/shared_volume && \
-      echo 'export GAZEBO_MODEL_PATH=~/catkin_ws/src/surveillance_sim/models:\$GAZEBO_MODEL_PATH' >> ~/.bashrc && \
-      cd \${HOME}/catkin_ws/src/surveillance_sim/install && ./build_gst_plugins.sh && \
+      cd \${HOME}/src && \
+      git clone https://github.com/forgi86/dynonet.git && \
+      echo 'export PYTHONPATH=/home/torch/src/dynonet' >> /home/torch/.bashrc && \
       cd && source .bashrc && /bin/bash"
 
 echo "Running container ${CONTAINER_NAME}..."
@@ -111,6 +99,7 @@ echo "Running container ${CONTAINER_NAME}..."
 #    -p 14570:14570/udp \
 docker run -it \
     --user=$USER_NAME \
+    --ipc=host \
     --env="DISPLAY=$DISPLAY" \
     --env="QT_X11_NO_MITSHM=1" \
     --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \

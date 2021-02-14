@@ -7,7 +7,8 @@ ENV ARROW_HOME /home/arrow
 USER arrow
 
 RUN pip install --upgrade pip
-# Prerequisites for kers-segmentation
+
+# Prerequisites for keras-segmentation
 RUN pip install opencv-python==4.2.0.32
 RUN pip install Keras==2.3.1
 RUN pip install launchpadlib==1.10.6
@@ -48,11 +49,24 @@ RUN cd $ARROW_HOME/src \
     && cd .. \
     && echo "arrow" | sudo -S python setup.py install
 
+# Install Pytorch
+RUN pip install torch==1.4.0 torchvision==0.5.0 --no-cache-dir
+RUN pip3 install torch==1.4.0 torchvision==0.5.0 --no-cache-dir
+
+# Required for semantic_cloud
+RUN echo "arrow" | sudo -S apt-get install ros-melodic-jsk-rviz-plugins -y
 
 # Clonning semantic_hazard_cloud
 RUN cd $ARROW_HOME/catkin_ws/src \
     && git clone https://github.com/kucars/semantic_hazard_cloud.git \
     && cd .. \
+    && catkin build
+
+# Clonning semantic_cloud
+RUN cd $ARROW_HOME/catkin_ws/src \
+    && git clone https://github.com/TarekTaha/semantic_cloud.git \
+    && cd semantic_cloud && mkdir models_trained \
+    && cd $ARROW_HOME/catkin_ws \
     && catkin build
 
 # Clonning semantic_based_exploration

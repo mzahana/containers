@@ -1,5 +1,5 @@
 #
-# Ubuntu 18 + CUDA 10.1 + CUDNN7 + Torch 1.4 Development Environment
+# Ubuntu 18 + CUDA 10.1 + CUDNN7 + Torch 1.4  Development Environment
 #
 
 FROM nvidia/cuda:10.1-cudnn7-runtime-ubuntu18.04
@@ -94,6 +94,8 @@ RUN pip3 install numpy scipy pandas matplotlib setuptools
 RUN pip3 install control
 RUN pip3 install torch==1.4.0 torchvision==0.5.0 --no-cache-dir
 
+RUN apt-get -y --quiet --no-install-recommends install python3.7-tk
+
 
 # Create user torch with id 1000 with sudo access
 RUN useradd --shell /bin/bash -u 1000 -c "" -m torch && usermod -a -G dialout torch && echo "torch:torch" | chpasswd && adduser torch sudo
@@ -112,9 +114,9 @@ ENV PATH="/usr/lib/ccache:$PATH"
 ENV TERM=xterm
 ENV TZ=UTC
 
+USER torch
+
 RUN echo "source /etc/profile.d/bash_completion.sh" >> /home/torch/.bashrc
 
-# Add dynonet package to PTYHONPATH
-RUN echo 'export PYTHONPATH=/home/torch/pytorch_ws/dynonet' >> /home/torch/.bashrc 
 
 CMD ["/bin/bash"]

@@ -1,5 +1,5 @@
  #! /bin/bash
-# Runs a docker container for Pytorch development
+# Runs a docker container for Autonomous Aerial Lab development
 # Requires:
 #   - docker
 #   - nvidia-docker
@@ -9,14 +9,15 @@
 #
 # Authors: Mohammed Abdelkader
  
-DOCKER_REPO="mzahana/ubuntu18-cuda10.1-cudnn7-torch1.4:latest"
-CONTAINER_NAME="pytorch1.4"
-WORKSPACE_DIR=~/pytorch_ws
+#sDOCKER_REPO="mzahana/multi_drone_surveillance_sim:latest"
+DOCKER_REPO="mzahana/px4-ros-melodic-cuda10.1:latest"
+CONTAINER_NAME="aerial_tracking"
+WORKSPACE_DIR=~/${CONTAINER_NAME}_shared_volume
 CMD=""
 DOCKER_OPTS=
 
 # User name inside container
-USER_NAME=torch
+USER_NAME=arrow
 
 # Get the current version of docker-ce
 # Strip leading stuff before the version number so it can be compared
@@ -33,12 +34,13 @@ then
 else
     DOCKER_OPTS="$DOCKER_OPTS --gpus all"
 fi
+echo "GPU arguments: $DOCKER_OPTS"
 
 # This will enable running containers with different names
 # It will create a local workspace and link it to the image's catkin_ws
 if [ "$1" != "" ]; then
     CONTAINER_NAME=$1
-    WORKSPACE_DIR=~/$1_ws
+    WORKSPACE_DIR=~/$1_shared_volume
     if [ ! -d $WORKSPACE_DIR ]; then
         mkdir -p $WORKSPACE_DIR
     fi
@@ -72,29 +74,44 @@ echo "Username:" $USER_NAME
 xhost +local:root
  
 echo "Starting Container: ${CONTAINER_NAME} with REPO: $DOCKER_REPO"
- 
+
 if [ "$(docker ps -aq -f name=${CONTAINER_NAME})" ]; then
     if [ "$(docker ps -aq -f status=exited -f name=${CONTAINER_NAME})" ]; then
         # cleanup
+        echo "Restarting the container..."
         docker start ${CONTAINER_NAME}
     fi
-    if [ -z "$CMD" ]; then
-        docker exec -it --user $USER_NAME ${CONTAINER_NAME} bash
-    else
-        docker exec -it --user $USER_NAME ${CONTAINER_NAME} bash -c "$CMD"
-    fi
+
+    docker exec -it --user $USER_NAME ${CONTAINER_NAME} bash
+
 else
+
+
+# The following command clones surveillance_sim. It gets executed the first time the container is run
+ CMD="read -p 'Enter your github ID please: '  gitID && \
+      read -p 'Enter Github password please: ' -s gitPass && \
+      if [ ! -d "\${HOME}/catkin_ws/src/px4_aerial_tracking" ]; then
+      cd \${HOME}/catkin_ws/src
+      git clone https://\$gitID:\$gitPass@github.com/mzahana/px4_aerial_tracking.git
+      fi && \
+      cp -R \${HOME}/catkin_ws/src/px4_aerial_tracking/config/10017_iris_depth_camera \${HOME}/Firmware/ROMFS/px4fmu_common/init.d-posix/ && \
+      cp -R \${HOME}/catkin_ws/src/px4_aerial_tracking/models/iris \${HOME}/Firmware/Tools/sitl_gazebo/models/ && \
+      cp -R \${HOME}/catkin_ws/src/px4_aerial_tracking/models/iris_depth_camera \${HOME}/Firmware/Tools/sitl_gazebo/models/ && \
+      cp -R \${HOME}/catkin_ws/src/px4_aerial_tracking/models/depth_camera_new \${HOME}/Firmware/Tools/sitl_gazebo/models/ && \
+      cd \${HOME}/catkin_ws && catkin build && \
+      echo "arrow" | sudo -S chown -R arrow:arrow \${HOME}/shared_volume && \
+      cd && source .bashrc && /bin/bash"
+
 echo "Running container ${CONTAINER_NAME}..."
 #-v /dev/video0:/dev/video0 \
 #    -p 14570:14570/udp \
 docker run -it \
     --user=$USER_NAME \
-    --ipc=host \
     --env="DISPLAY=$DISPLAY" \
     --env="QT_X11_NO_MITSHM=1" \
     --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
     --volume="/etc/localtime:/etc/localtime:ro" \
-    --volume="$WORKSPACE_DIR:/home/$USER_NAME/pytorch_ws:rw" \
+    --volume="$WORKSPACE_DIR:/home/$USER_NAME/shared_volume:rw" \
     --volume="/dev/input:/dev/input" \
     --volume="$XAUTH:$XAUTH" \
     -env="XAUTHORITY=$XAUTH" \
@@ -103,7 +120,7 @@ docker run -it \
     --privileged \
     $DOCKER_OPTS \
     ${DOCKER_REPO} \
-    bash
+    bash -c "${CMD}"
 fi
    
-xhost -local:root
+#xhost -local:root

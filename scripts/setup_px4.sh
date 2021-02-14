@@ -113,15 +113,14 @@ else
 fi
 cd ${HOME}/Firmware
 make clean && make distclean
-git checkout v1.10.1  && git submodule update --recursive
+#git checkout v1.10.1  && git submodule update --recursive
+git checkout v1.11.2  && git submodule update --recursive
 
-cd ${HOME}/Firmware/Tools/sitl_gazebo/external/OpticalFlow
-git submodule update --recursive
-cd ${HOME}/Firmware/Tools/sitl_gazebo/external/OpticalFlow/external/klt_feature_tracker
-git submodule update --recursive
+#cd ${HOME}/Firmware/Tools/sitl_gazebo/external/OpticalFlow && git submodule update --recursive # this is needed for PX4 v1.10.1
+# cd ${HOME}/Firmware/Tools/sitl_gazebo/external/OpticalFlow/external/klt_feature_tracker && git submodule update --recursive # this is needed for PX4 v1.10.1
 #### NOTE: in PX4 v1.10.1, there is a bug in Firmware/Tools/sitl_gazebo/include/gazebo_opticalflow_plugin.h:43:18
-#### NOTE  #define HAS_GYRO TRUE needs to be replaced by #define HAS_GYRO true
-sed -i 's/#define HAS_GYRO.*/#define HAS_GYRO true/' ${HOME}/Firmware/Tools/sitl_gazebo/include/gazebo_opticalflow_plugin.h
+#### NOTE:  #define HAS_GYRO TRUE needs to be replaced by #define HAS_GYRO true
+# sed -i 's/#define HAS_GYRO.*/#define HAS_GYRO true/' ${HOME}/Firmware/Tools/sitl_gazebo/include/gazebo_opticalflow_plugin.h # this is needed for PX4 v1.10.1
 
 cd ${HOME}/Firmware
 DONT_RUN=1 make px4_sitl gazebo
