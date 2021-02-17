@@ -1,7 +1,7 @@
 # This dockerfile installs px4_pid_tuner inside Ubuntu 18 image
 #   https://github.com/mzahana/px4_pid_tuner
 #
-ARG BASE_IMAGE=ubuntu:20.04
+ARG BASE_IMAGE=ubuntu:18.04
 FROM ${BASE_IMAGE}
 LABEL maintainer="mohamedashraf123@gmail.com"
 
@@ -13,6 +13,7 @@ WORKDIR /workspace
 # add the ROS deb repo to the apt sources list
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
+    software-properties-common \
     git \
     sudo \
 		cmake \
@@ -26,8 +27,12 @@ RUN apt-get update && \
 		iputils-ping \
 		nano \
 		bash-completion \
+    python \
+    python-pip \
+    python-setuptools \
 		python3-pip \
     python3-dev \
+    python3-setuptools \
     && rm -rf /var/lib/apt/lists/*
 
     # Install CMake
@@ -55,8 +60,7 @@ RUN cd /home/$CONTAINER_USER && mkdir src
 RUN echo "source /etc/profile.d/bash_completion.sh" >> /home/$CONTAINER_USER/.bashrc
 
 RUN cd ${HOME}/src && \
-    git clone https://github.com/mzahana/px4_pid_tuner.git && \
-    cd px4_pid_tuner && git checkout ubuntu18
+    git clone https://github.com/mzahana/px4_pid_tuner.git
 
 
 CMD ["bash"]
