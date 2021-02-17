@@ -67,7 +67,7 @@ else
 
 
 # The following command install dependecies of px4_pid_tuner. It gets executed the first time the container is run
- CMD="cd \${HOME}/src/px4_pid_tuner && git pull && ./install.sh && /bin/bash"
+ CMD="cd \${HOME}/src/px4_pid_tuner && git pull && /bin/bash"
 
 echo "Running container ${CONTAINER_NAME}..."
 #-v /dev/video0:/dev/video0 \
