@@ -1,9 +1,8 @@
 #
-# Ubuntu 18 + CUDA 10.1 + CUDNN7
+# Ubuntu 18 + CUDA 10.1 + OPENGL
 #
-
-#FROM nvidia/cudagl:10.1-devel-ubuntu18.04
-FROM nvidia/cuda:10.1-cudnn7-runtime-ubuntu18.04
+#FROM nvidia/cuda:10.1-cudnn7-runtime-ubuntu18.04
+FROM nvidia/cudagl:10.1-devel-ubuntu18.04
 LABEL maintainer="Mohamed Abdelkader <mohamedashraf123@gmail.com>"
 
 ENV DEBIAN_FRONTEND noninteractive
