@@ -94,6 +94,7 @@ echo "Running container ${CONTAINER_NAME}..."
 #-v /dev/video0:/dev/video0 \
 #    -p 14570:14570/udp \
 docker run -it \
+    --network host \
     --user=$USER_NAME \
     --env="DISPLAY=$DISPLAY" \
     --env="QT_X11_NO_MITSHM=1" \
