@@ -98,10 +98,13 @@ else
 
 
 # The following command clones surveillance_sim. It gets executed the first time the container is run
+# 
  CMD="cd \$HOME/catkin_ws/src && \
+      echo '-----------------------------' && echo
       git clone https://github.com/mzahana/px4_octune_ros.git && \
       cd \$HOME/catkin_ws/src/px4_octune_ros && ./scripts/setup.sh && \
-      /bin/bash"
+      cd \$HOME/catkin_ws && catkin build && \
+      source \$HOME/.bashrc && /bin/bash"
 
 echo "Running container ${CONTAINER_NAME}..."
 #-v /dev/video0:/dev/video0 \
