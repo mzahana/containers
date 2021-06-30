@@ -81,8 +81,6 @@ echo "Docker container username:" $USER_NAME
 
 #not-recommended - T.T please fix me, check this: http://wiki.ros.org/docker/Tutorials/GUI
 xhost +local:root
- 
-echo "Starting Container: ${CONTAINER_NAME} with REPO: $DOCKER_REPO"
 
 CMD="/bin/bash"
 if [ "$(docker ps -aq -f name=${CONTAINER_NAME})" ]; then
@@ -92,18 +90,21 @@ if [ "$(docker ps -aq -f name=${CONTAINER_NAME})" ]; then
         docker start ${CONTAINER_NAME}
     fi
 
-    docker exec -it --user $USER_NAME ${CONTAINER_NAME} bash -c ${CMD}
+    docker exec -it --user $USER_NAME ${CONTAINER_NAME} bash
 
 else
 
+echo "Starting Container: ${CONTAINER_NAME} with REPO: $DOCKER_REPO"
 
 # The following command clones surveillance_sim. It gets executed the first time the container is run
 # 
  CMD="cd \$HOME/catkin_ws/src && \
-      echo '-----------------------------' && echo
-      git clone https://github.com/mzahana/px4_octune_ros.git && \
-      cd \$HOME/catkin_ws/src/px4_octune_ros && ./scripts/setup.sh && \
-      cd \$HOME/catkin_ws && catkin build && \
+      echo '-----------------------------' && echo && \
+      if [ ! -d "\$HOME/catkin_ws/src/px4_octune_ros" ]; then
+      git clone https://github.com/mzahana/px4_octune_ros.git
+      cd \$HOME/catkin_ws/src/px4_octune_ros && ./scripts/setup.sh
+      cd \$HOME/catkin_ws && catkin build
+      fi && \
       source \$HOME/.bashrc && /bin/bash"
 
 echo "Running container ${CONTAINER_NAME}..."
