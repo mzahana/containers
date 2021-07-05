@@ -17,6 +17,15 @@ DOCKER_OPTS=
 
 # User name inside container
 USER_NAME=arrow
+SUDO_PASS=arrow
+
+# For coloring terminal output
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+if [ -z "${GIT_TOKEN}" ]; then
+    echo -e "${RED} Please export GIT_TOKEN before using this script ${NC}" && echo
+    exit 10
+fi
 
 # Get the current version of docker-ce
 # Strip leading stuff before the version number so it can be compared
@@ -75,6 +84,7 @@ xhost +local:root
  
 echo "Starting Container: ${CONTAINER_NAME} with REPO: $DOCKER_REPO"
 
+CMD="/bin/bash"
 if [ "$(docker ps -aq -f name=${CONTAINER_NAME})" ]; then
     if [ "$(docker ps -aq -f status=exited -f name=${CONTAINER_NAME})" ]; then
         # cleanup
@@ -82,21 +92,18 @@ if [ "$(docker ps -aq -f name=${CONTAINER_NAME})" ]; then
         docker start ${CONTAINER_NAME}
     fi
 
-    docker exec -it --user $USER_NAME ${CONTAINER_NAME} bash
+    docker exec -it --user $USER_NAME ${CONTAINER_NAME} bash -c ${CMD}
 
 else
 
 
 # The following command clones surveillance_sim. It gets executed the first time the container is run
- CMD="cd \${HOME}/src/containers && git pull && ./scripts/setup_px4_avoidance.sh && \
-      cd \${HOME}/catkin_ws/src && \
-      git clone https://github.com/riotu-lab/roslink.git && \
-      cd roslink && git checkout ubuntu18 && \
-      ./install_dependencies.sh && \
-      cd \${HOME}/catkin_ws/src && git clone https://github.com/riotu-lab/psu_delivery_drone_sim.git && \
-      cd psu_delivery_drone_sim/scripts && \
-      ./setup.sh && \
-      cd \${HOME}/catkin_ws && catkin build && \
+ CMD="export GIT_TOKEN=${GIT_TOKEN} && export SUDO_PASS=arrow && \
+      if [ ! -d "\$HOME/catkin_ws/src/psu_delivery_drone_sim" ]; then
+      cd \${HOME}/catkin_ws/src
+      git clone https://${GIT_TOKEN}@github.com/riotu-lab/psu_delivery_drone_sim.git
+      cd \${HOME}/catkin_ws/src/psu_delivery_drone_sim/scripts && ./setup.sh
+      fi && \
       cd \${HOME} && source .bashrc && \
       /bin/bash"
 

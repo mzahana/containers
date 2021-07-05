@@ -86,19 +86,21 @@ if [ "$(docker ps -aq -f name=${CONTAINER_NAME})" ]; then
         echo "Restarting the container..."
         docker start ${CONTAINER_NAME}
     fi
-    if [ -z "$CMD" ]; then
-        docker exec -it --user $USER_NAME ${CONTAINER_NAME} bash
-    else
-        docker exec -it --user $USER_NAME ${CONTAINER_NAME} bash -c "$CMD && /bin/bash"
-    fi
+
+    docker exec -it --user $USER_NAME ${CONTAINER_NAME} bash
 
 else
 
 
+
 # The following command clones drone_hunter_sim. It gets executed the first time the container is run
- CMD="cd \${HOME}/catkin_ws/src && git clone https://${GIT_TOKEN}@github.com/riotu-lab/drone_hunter_sim.git && \
-      cd drone_hunter_sim/scripts && \
-      ./setup.sh arrow ${GIT_TOKEN} && \
+ CMD="export SUDO_PASS=arrow && export GIT_TOKEN=${GIT_TOKEN}
+      if [ ! -d "\$HOME/catkin_ws/src/drone_hunter_sim" ]; then
+      cd \$HOME/catkin_ws/src
+      git clone https://${GIT_TOKEN}@github.com/riotu-lab/drone_hunter_sim.git
+      cd \$HOME/catkin_ws/src/drone_hunter_sim && ./scripts/setup.sh
+      cd \$HOME/catkin_ws && catkin build
+      fi && \
       cd \${HOME} && source .bashrc && \
       /bin/bash"
 

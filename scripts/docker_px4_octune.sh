@@ -98,10 +98,16 @@ echo "Starting Container: ${CONTAINER_NAME} with REPO: $DOCKER_REPO"
 
 # The following command clones surveillance_sim. It gets executed the first time the container is run
 # 
- CMD="cd \$HOME/catkin_ws/src && \
+if [ -z ${PERSONAL_GIT_TOKEN} ];then
+    CLONE_PX4_OCTUNE="git clone https://github.com/mzahana/px4_octune_ros.git"
+else
+    CLONE_PX4_OCTUNE="git clone https://$PERSONAL_GIT_TOKEN@github.com/mzahana/px4_octune_ros.git"
+fi
+ CMD="export GIT_TOKEN=${PERSONAL_GIT_TOKEN} && export SUDO_PASS=arrow && \
+      cd \$HOME/catkin_ws/src && \
       echo '-----------------------------' && echo && \
       if [ ! -d "\$HOME/catkin_ws/src/px4_octune_ros" ]; then
-      git clone https://github.com/mzahana/px4_octune_ros.git
+      $CLONE_PX4_OCTUNE
       cd \$HOME/catkin_ws/src/px4_octune_ros && ./scripts/setup.sh
       cd \$HOME/catkin_ws && catkin build
       fi && \
