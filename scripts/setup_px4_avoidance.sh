@@ -9,7 +9,12 @@ fi
 echo " " && echo "Installing avoidance module dependencies (pointcloud library and octomap)." && echo " "
 sleep 1
 
-sudo apt-get update && sudo apt-get install -y libpcl1 ros-melodic-octomap-* ros-melodic-stereo-image-proc ros-melodic-image-view ros-melodic-rqt-reconfigure
+if [ -z "$SUDO_PASS" ]; then
+    sudo apt-get update && sudo apt-get install -y libpcl1 ros-melodic-octomap-* ros-melodic-stereo-image-proc ros-melodic-image-view ros-melodic-rqt-reconfigure
+else
+    echo $SUDO_PASS | sudo -S apt-get update && echo $SUDO_PASS |  sudo -S apt-get install -y libpcl1 ros-melodic-octomap-* ros-melodic-stereo-image-proc ros-melodic-image-view ros-melodic-rqt-reconfigure
+fi
+
 
 if [ ! -d "${HOME}/catkin_ws/src/avoidance" ]; then
     cd ${HOME}/catkin_ws/src
@@ -28,4 +33,4 @@ echo "export GAZEBO_MODEL_PATH=\${GAZEBO_MODEL_PATH}:~/catkin_ws/src/avoidance/a
 
 source ${HOME}/.bashrc
 
-echo " " && echo " ---------- DONE! ----------" && echo " "
+echo " " && echo " ---------- PX4 acoidance setup is DONE! ----------" && echo " "
