@@ -85,6 +85,10 @@ xhost +local:root
 echo "Starting Container: ${CONTAINER_NAME} with REPO: $DOCKER_REPO"
 
 CMD="/bin/bash"
+if [ "$2" != "" ]; then
+    CMD=$2
+fi
+echo $CMD
 if [ "$(docker ps -aq -f name=${CONTAINER_NAME})" ]; then
     if [ "$(docker ps -aq -f status=exited -f name=${CONTAINER_NAME})" ]; then
         # cleanup
@@ -92,7 +96,7 @@ if [ "$(docker ps -aq -f name=${CONTAINER_NAME})" ]; then
         docker start ${CONTAINER_NAME}
     fi
 
-    docker exec -it --user $USER_NAME ${CONTAINER_NAME} bash -c ${CMD}
+    docker exec -it --user $USER_NAME ${CONTAINER_NAME} bash -c "${CMD}"
 
 else
 
