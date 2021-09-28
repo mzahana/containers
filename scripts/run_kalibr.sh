@@ -11,5 +11,5 @@ if [ ! -d "$data_dir" ]; then
 fi
 
 xhost +local:root;
-docker run -it --name kalibr -e DISPLAY -e QT_X11_NO_MITSHM=1 -v /tmp/.X11-unix:/tmp/.X11-unix:rw -v $data_dir:/root/data mzahana/kalibr:kinetic /bin/bash -c "cd /root/data; /bin/bash"
+docker run -it --rm --name kalibr -e DISPLAY -e QT_X11_NO_MITSHM=1 -v /tmp/.X11-unix:/tmp/.X11-unix:rw -v $data_dir:/root/data mzahana/kalibr:kinetic /bin/bash -c "cd /root/data; /bin/bash"
 xhost -local:root;
