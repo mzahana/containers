@@ -95,10 +95,13 @@ docker run -it \
     --user=$USER_NAME \
     --env="DISPLAY=$DISPLAY" \
     --env="QT_X11_NO_MITSHM=1" \
+    -v /dev:/dev \
+    --group-add=dialout \
+    --group-add=video \
+    --group-add=tty \
     --volume="/tmp/.X11-unix:/tmp/.X11-unix" \
     --volume="/etc/localtime:/etc/localtime:ro" \
     --volume="$WORKSPACE_DIR:/home/$USER_NAME/shared_volume:rw" \
-    --volume="/dev/input:/dev/input" \
     --volume="$XAUTH:$XAUTH" \
     -env="XAUTHORITY=$XAUTH" \
     --workdir="/home/$USER_NAME" \
