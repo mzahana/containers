@@ -90,6 +90,8 @@ echo "Running container ${CONTAINER_NAME}..."
 #-v /dev/video0:/dev/video0 \
 #    -p 14570:14570/udp \
 
+CMD="/bin/bash"
+
 docker run -it \
     --network host \
     --user=$USER_NAME \
@@ -109,7 +111,7 @@ docker run -it \
     --privileged \
     $DOCKER_OPTS \
     ${DOCKER_REPO} \
-    bash #-c "cd ~/catkin_ws && catkin build minkindr_conversions && catkin build && cd && source .bashrc && /bin/bash"
+    bash -c "$CMD"
 fi
    
 #xhost -local:root

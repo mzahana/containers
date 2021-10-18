@@ -45,3 +45,8 @@ RUN if [ ! -d "$ARROW_HOME/src/containers" ]; then \
     && cd $ARROW_HOME/src/containers/scripts \
     && echo "Cloning and building PX4 v1.10.1 ..." \
     && ./setup_px4.sh; fi
+
+RUN echo "export PATH=\$PATH:/home/arrow/.local/bin:/home/arrow/.local/bin" >> /home/arrow/.bashrc
+RUN echo "export PATH=\$PATH:/usr/local/cuda-10.1/bin" >> /home/arrow/.bashrc
+RUN echo "export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:/usr/local/cuda-10.1/lib64:/usr/local/cuda-10.1/targets/x86_64-linux/lib/:/usr/local/cuda/extras/CUPTI/lib64/" >> /home/arrow/.bashrc
+RUN echo "export CUDA_HOME=/usr/local/cuda" >> /home/arrow/.bashrc
