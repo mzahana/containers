@@ -22,7 +22,7 @@ SUDO_PASS=arrow
 # For coloring terminal output
 RED='\033[0;31m'
 NC='\033[0m' # No Color
-if [ -z "${GIT_TOKEN}" ]; then
+if [ -z "${RIOTU_GIT_TOKEN}" ]; then
     echo -e "${RED} Please export GIT_TOKEN before using this script ${NC}" && echo
     exit 10
 fi
@@ -102,10 +102,10 @@ else
 
 
 # The following command clones surveillance_sim. It gets executed the first time the container is run
- CMD="export GIT_TOKEN=${GIT_TOKEN} && export SUDO_PASS=arrow && \
+ CMD="export GIT_TOKEN=${RIOTU_GIT_TOKEN} && export SUDO_PASS=arrow && \
       if [ ! -d "\$HOME/catkin_ws/src/psu_delivery_drone_sim" ]; then
       cd \${HOME}/catkin_ws/src
-      git clone https://${GIT_TOKEN}@github.com/riotu-lab/psu_delivery_drone_sim.git
+      git clone https://${RIOTU_GIT_TOKEN}@github.com/riotu-lab/psu_delivery_drone_sim.git
       cd \${HOME}/catkin_ws/src/psu_delivery_drone_sim/scripts && ./setup.sh
       fi && \
       cd \${HOME} && source .bashrc && \
@@ -117,12 +117,13 @@ echo "Running container ${CONTAINER_NAME}..."
 docker run -it \
     --network host \
     --user=$USER_NAME \
+    --group-add=video \
+    -v /dev:/dev \
     --env="DISPLAY=$DISPLAY" \
     --env="QT_X11_NO_MITSHM=1" \
     --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
     --volume="/etc/localtime:/etc/localtime:ro" \
     --volume="$WORKSPACE_DIR:/home/$USER_NAME/shared_volume:rw" \
-    --volume="/dev/input:/dev/input" \
     --volume="$XAUTH:$XAUTH" \
     -env="XAUTHORITY=$XAUTH" \
     --workdir="/home/$USER_NAME" \
