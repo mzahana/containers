@@ -134,4 +134,4 @@ docker run -it \
     bash -c "${CMD}"
 fi
    
-#xhost -local:root
+xhost -local:root
