@@ -9,6 +9,15 @@
 #
 # Authors: Tarek Taha, Mohammed Abdelkader
  
+
+ RED='\033[0;31m'
+NC='\033[0m' # No Color
+if [ -z "${SYSTEMTRIO_GIT_TOKEN}" ]; then
+    echo -e "${RED} Please export SYSTEMTRIO_GIT_TOKEN before using this script ${NC}" && echo
+    exit 10
+fi
+
+
 #sDOCKER_REPO="mzahana/multi_drone_surveillance_sim:latest"
 DOCKER_REPO="mzahana/px4-ros-melodic-cuda10.1:latest"
 CONTAINER_NAME="surv_sim"
@@ -88,11 +97,11 @@ else
 
 
 # The following command clones surveillance_sim. It gets executed the first time the container is run
- CMD="read -p 'Please enter your github ID: '  gitID && \
-      read -p 'Please enter your Github password: ' -s gitPass && \
+ CMD=" export SYSTEMTRIO_GIT_TOKEN=${SYSTEMTRIO_GIT_TOKEN} && \
       if [ ! -d "\${HOME}/catkin_ws/src/surveillance_sim" ]; then
       cd \${HOME}/catkin_ws/src
-      git clone https://\$gitID:\$gitPass@github.com/SystemTrio-Robotics/surveillance_sim.git
+      git clone https://${SYSTEMTRIO_GIT_TOKEN}@github.com/SystemTrio-Robotics/surveillance_sim.git
+      cd \${HOME}/catkin_ws/src/surveillance_sim/install && ./setup.sh
       fi && \
       cp -R \${HOME}/catkin_ws/src/surveillance_sim/models/typhoon_h480 \${HOME}/Firmware/Tools/sitl_gazebo/models/ && \
       cp -R \${HOME}/catkin_ws/src/surveillance_sim/models/typhoon_h480_dual \${HOME}/Firmware/Tools/sitl_gazebo/models/ && \
@@ -103,7 +112,6 @@ else
       cd \${HOME}/catkin_ws && catkin build && \
       echo "arrow" | sudo -S chown -R arrow:arrow \${HOME}/shared_volume && \
       echo 'export GAZEBO_MODEL_PATH=~/catkin_ws/src/surveillance_sim/models:\$GAZEBO_MODEL_PATH' >> ~/.bashrc && \
-      cd \${HOME}/catkin_ws/src/surveillance_sim/install && ./build_gst_plugins.sh && \
       cd && source .bashrc && /bin/bash"
 
 echo "Running container ${CONTAINER_NAME}..."
@@ -122,6 +130,7 @@ docker run -it \
     --workdir="/home/$USER_NAME" \
     --name=${CONTAINER_NAME} \
     --privileged \
+    --network host \
     $DOCKER_OPTS \
     ${DOCKER_REPO} \
     bash -c "${CMD}"

@@ -1,5 +1,5 @@
- #! /bin/bash
-# Runs a docker container for PSU delivery drone project simulation environment
+#! /bin/bash
+# Runs a docker container for simulating autonomous drone hunter project
 # Requires:
 #   - docker
 #   - nvidia-docker
@@ -7,25 +7,16 @@
 # Optional:
 #   - device mounting such as: joystick mounted to /dev/input/js0
 #
-# Authors: Mohammed Abdelkader
+# Authors: Mohammed Abdelkader, mohamedashraf123@gmail.com
  
 DOCKER_REPO="mzahana/px4-ros-melodic-cuda10.1:latest"
-CONTAINER_NAME="psu_sim"
+CONTAINER_NAME="drone_hunter_sim"
 WORKSPACE_DIR=~/${CONTAINER_NAME}_shared_volume
 CMD=""
 DOCKER_OPTS=
 
 # User name inside container
 USER_NAME=arrow
-SUDO_PASS=arrow
-
-# For coloring terminal output
-RED='\033[0;31m'
-NC='\033[0m' # No Color
-if [ -z "${RIOTU_GIT_TOKEN}" ]; then
-    echo -e "${RED} Please export GIT_TOKEN before using this script ${NC}" && echo
-    exit 10
-fi
 
 # Get the current version of docker-ce
 # Strip leading stuff before the version number so it can be compared
@@ -54,6 +45,11 @@ if [ ! -d $WORKSPACE_DIR ]; then
     mkdir -p $WORKSPACE_DIR
 fi
 echo "Container name:$CONTAINER_NAME WORSPACE DIR:$WORKSPACE_DIR" 
+
+
+if [ "$2" != "" ]; then
+    CMD=$2
+fi
 
 XAUTH=/tmp/.docker.xauth
 xauth_list=$(xauth nlist :0 | sed -e 's/^..../ffff/')
@@ -101,37 +97,34 @@ if [ "$(docker ps -aq -f name=${CONTAINER_NAME})" ]; then
 else
 
 
-# The following command clones surveillance_sim. It gets executed the first time the container is run
- CMD="export GIT_TOKEN=${RIOTU_GIT_TOKEN} && export SUDO_PASS=arrow && \
-      if [ ! -d "\$HOME/catkin_ws/src/psu_delivery_drone_sim" ]; then
-      cd \${HOME}/catkin_ws/src
-      git clone https://${RIOTU_GIT_TOKEN}@github.com/riotu-lab/psu_delivery_drone_sim.git
-      cd \${HOME}/catkin_ws/src/psu_delivery_drone_sim/scripts && ./setup.sh
-      fi && \
-      cd \${HOME} && source .bashrc && \
-      /bin/bash"
+    # The following command clones drone_hunter_sim. It gets executed the first time the container is run
+    CMD="export GIT_TOKEN=${GIT_TOKEN} &&  export SUDO_PASS=arrow && \
+        if [ ! -d "\$HOME/catkin_ws/src/drone_hunter_sim" ]; then
+        cd \${HOME}/catkin_ws/src
+        git clone https://${GIT_TOKEN}@github.com/riotu-lab/drone_hunter_sim.git
+        cd drone_hunter_sim/scripts && ./setup.sh
+        fi && \
+        cd \${HOME} && source .bashrc && \
+        /bin/bash"
 
-echo "Running container ${CONTAINER_NAME}..."
-#-v /dev/video0:/dev/video0 \
-#    -p 14570:14570/udp \
-docker run -it \
-    --network host \
-    --user=$USER_NAME \
-    --group-add=video \
-    -v /dev:/dev \
-    --env="DISPLAY=$DISPLAY" \
-    --env="QT_X11_NO_MITSHM=1" \
-    --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
-    --volume="/etc/localtime:/etc/localtime:ro" \
-    --volume="$WORKSPACE_DIR:/home/$USER_NAME/shared_volume:rw" \
-    --volume="$XAUTH:$XAUTH" \
-    -env="XAUTHORITY=$XAUTH" \
-    --workdir="/home/$USER_NAME" \
-    --name=${CONTAINER_NAME} \
-    --privileged \
-    $DOCKER_OPTS \
-    ${DOCKER_REPO} \
-    bash -c "${CMD}"
+    echo "Running container ${CONTAINER_NAME}..."
+    #-v /dev/video0:/dev/video0 \
+    #    -p 14570:14570/udp \
+    docker run -it \
+        --network host \
+        --user=$USER_NAME \
+        --env="DISPLAY=$DISPLAY" \
+        --env="QT_X11_NO_MITSHM=1" \
+        --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
+        --volume="/etc/localtime:/etc/localtime:ro" \
+        --volume="$WORKSPACE_DIR:/home/$USER_NAME/shared_volume:rw" \
+        --volume="/dev/input:/dev/input" \
+        --volume="$XAUTH:$XAUTH" \
+        -env="XAUTHORITY=$XAUTH" \
+        --workdir="/home/$USER_NAME" \
+        --name=${CONTAINER_NAME} \
+        --privileged \
+        $DOCKER_OPTS \
+        ${DOCKER_REPO} \
+        bash -c "${CMD}"
 fi
-   
-xhost -local:root

@@ -22,7 +22,7 @@ SUDO_PASS=arrow
 # For coloring terminal output
 RED='\033[0;31m'
 NC='\033[0m' # No Color
-if [ -z "${GIT_TOKEN}" ]; then
+if [ -z "${PERSONAL_GIT_TOKEN}" ]; then
     echo -e "${RED} Please export GIT_TOKEN before using this script ${NC}" && echo
     exit 10
 fi
