@@ -99,10 +99,10 @@ else
 
     # The following command clones drone_hunter_sim. It gets executed the first time the container is run
     CMD="export GIT_TOKEN=${GIT_TOKEN} &&  export SUDO_PASS=arrow && \
-        if [ ! -d "\$HOME/catkin_ws/src/drone_hunter_sim" ]; then
+        if [ ! -d "\$HOME/catkin_ws/src/psu_delivery_drone_sim" ]; then
         cd \${HOME}/catkin_ws/src
-        git clone https://${GIT_TOKEN}@github.com/riotu-lab/drone_hunter_sim.git
-        cd drone_hunter_sim/scripts && ./setup.sh
+        git clone https://${GIT_TOKEN}@github.com/riotu-lab/psu_delivery_drone_sim.git
+        cd psu_delivery_drone_sim/scripts && ./setup.sh
         fi && \
         cd \${HOME} && source .bashrc && \
         /bin/bash"
