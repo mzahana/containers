@@ -1,5 +1,5 @@
 #! /bin/bash
-# Runs a docker container for simulating autonomous drone hunter project
+# Runs a docker container for simulating autonomous drone delivery
 # Requires:
 #   - docker
 #   - nvidia-docker
@@ -10,7 +10,7 @@
 # Authors: Mohammed Abdelkader, mohamedashraf123@gmail.com
  
 DOCKER_REPO="mzahana/px4-ros-melodic-cuda10.1:latest"
-CONTAINER_NAME="drone_hunter_sim"
+CONTAINER_NAME="psu_sim"
 WORKSPACE_DIR=~/${CONTAINER_NAME}_shared_volume
 CMD=""
 DOCKER_OPTS=
