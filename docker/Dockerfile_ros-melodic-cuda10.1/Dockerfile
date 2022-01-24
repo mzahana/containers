@@ -104,6 +104,7 @@ RUN wget https://github.com/mavlink/MAVSDK/releases/download/v0.23.0/mavsdk_0.23
 RUN rosdep init && su -c "rosdep update -c /home/arrow/.ros/rosdep/sources.cache" - arrow
 RUN echo "source /opt/ros/melodic/setup.bash" >> ~/.bashrc
 
+USER arrow
 ENV ARROW_HOME /home/arrow
 ENV CATKIN_WS $ARROW_HOME/catkin_ws
 
