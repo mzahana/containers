@@ -18,16 +18,6 @@ RUN echo "arrow" | sudo -S add-apt-repository "deb [arch=amd64] https://packages
 RUN echo "arrow" | sudo -S apt-get update
 RUN echo "arrow" | sudo -S apt-get -y --quiet install code libgbm-dev
 
-# Create & build catkin_ws
-RUN mkdir -p $ARROW_HOME/catkin_ws/src \
-    && echo "arrow" | sudo -S chown -R arrow:arrow $ARROW_HOME/catkin_ws \
-    && cd ~/catkin_ws \
-    && catkin init \
-    && catkin config --cmake-args -DCMAKE_BUILD_TYPE=Release \
-    && catkin config --merge-devel \
-    && catkin config --extend /opt/ros/$ROS_DISTRO \
-    && catkin build
-
 # source catkin_ws inside .bashrc
 RUN sed -i '/source ~\/catkin_ws\/devel\/setup.bash/d' $HOME/.bashrc && \
     sed -i 's+source /opt/ros/melodic/setup.bash+source /opt/ros/melodic/setup.bash\nsource ~/catkin_ws/devel/setup.bash+g' $ARROW_HOME/.bashrc

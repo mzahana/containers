@@ -110,7 +110,15 @@ ENV CATKIN_WS $ARROW_HOME/catkin_ws
 RUN echo "Working Folder is:$ARROW_HOME"
 
 # RUN echo "Setting up the workspace"
-RUN mkdir -p $CATKIN_WS/src
+# Create & build catkin_ws
+RUN mkdir -p $ARROW_HOME/catkin_ws/src \
+    && echo "arrow" | sudo -S chown -R arrow:arrow $ARROW_HOME/catkin_ws \
+    && cd ~/catkin_ws \
+    && catkin init \
+    && catkin config --cmake-args -DCMAKE_BUILD_TYPE=Release \
+    && catkin config --merge-devel \
+    && catkin config --extend /opt/ros/$ROS_DISTRO \
+    && catkin build
 RUN echo "arrow" | sudo apt update
 
 #ENTRYPOINT ["/usr/local/bin/ros_entrypoint.sh"]
