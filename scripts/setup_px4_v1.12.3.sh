@@ -72,7 +72,7 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get -y --quiet --no-install-recommends i
 		gstreamer1.0-gl \
 		gstreamer1.0-libav \
 		libeigen3-dev \
-		libgazebo9-dev \
+		libgazebo11-dev \
 		libgstreamer-plugins-base1.0-dev \
 		libimage-exiftool-perl \
 		libopencv-dev \
