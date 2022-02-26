@@ -99,6 +99,7 @@ make clean && make distclean
 git checkout v1.12.3  && git submodule update --recursive
 
 cd ${HOME}/PX4-Autopilot
+# There is an issue here!! Maybe it does not work with Gazebo 11!!
 DONT_RUN=1 make px4_sitl gazebo
 
 #Copying this to  .bashrc file
