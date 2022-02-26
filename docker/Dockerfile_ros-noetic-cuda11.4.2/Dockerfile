@@ -88,6 +88,7 @@ RUN pip3 install -U \
 # bootstrap rosdep
 RUN rosdep init && rosdep update
 
+RUN echo "source /opt/ros/noetic/setup.bash" >> $HOME/.bashrc
 #
 # PX4
 #
@@ -108,12 +109,6 @@ RUN cd $HOME/catkin_ws \
     && catkin config --merge-devel \
     && catkin config --extend /opt/ros/$ROS_DISTRO \
     && catkin build
-
-# # source catkin_ws inside .bashrc
-RUN sed -i '/source ~\/catkin_ws\/devel\/setup.bash/d' /root/.bashrc && \
-    sed -i 's+source /opt/ros/noetic/setup.bash+source /opt/ros/noetic/setup.bash\nsource ~/catkin_ws/devel/setup.bash+g' /root/.bashrc
-
-
 
 RUN if [ ! -d "$HOME/src" ]; then \
     mkdir -p $HOME/src; fi
