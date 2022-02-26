@@ -1,5 +1,5 @@
 #
-# PX4 + ROS Noetic + CUDA 11.4.2
+# ROS Noetic + CUDA 11.4.2
 #
 
 FROM mzahana/base-ubuntu20-cuda11.4.2:latest
@@ -126,10 +126,6 @@ RUN if [ ! -d "$HOME/src" ]; then \
 #     && echo "Cloning and building PX4 v1.12.1 ..." \
 #     && ./setup_px4.sh; fi
 
-RUN echo "export PATH=\$PATH:\$HOME/.local/bin:\$HOME/.local/bin" >> $HOME/.bashrc
-# RUN echo "export PATH=\$PATH:/usr/local/cuda-10.1/bin" >> $HOME.bashrc
-# RUN echo "export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:/usr/local/cuda-10.1/lib64:/usr/local/cuda-10.1/targets/x86_64-linux/lib/:/usr/local/cuda/extras/CUPTI/lib64/" >> $HOME/.bashrc
-RUN echo "export CUDA_HOME=/usr/local/cuda" >> $HOME/.bashrc
 
 # create and start as LOCAL_USER_ID
 COPY scripts/entrypoint.sh /usr/local/bin/entrypoint.sh

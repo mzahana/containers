@@ -130,4 +130,10 @@ ENV TZ=UTC
 EXPOSE 14556/udp
 EXPOSE 14557/udp
 
+# CUDA
+RUN echo "export PATH=\$PATH:\$HOME/.local/bin:\$HOME/.local/bin" >> $HOME/.bashrc
+RUN echo "export PATH=\$PATH:/usr/local/cuda-11.4/bin" >> $HOME/.bashrc
+RUN echo "export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:/usr/local/cuda-11.4/lib64:/usr/local/cuda-11.4/targets/x86_64-linux/lib/:/usr/local/cuda/extras/CUPTI/lib64/" >> $HOME/.bashrc
+RUN echo "export CUDA_HOME=/usr/local/cuda" >> $HOME/.bashrc
+
 CMD ["/bin/bash"]

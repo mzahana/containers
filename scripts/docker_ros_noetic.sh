@@ -1,5 +1,5 @@
 #! /bin/bash
-# Runs a docker container for simulating autonomous drone delivery
+# Runs a docker container CUDA 11.4  + ROS Noetic + Ubuntu 20
 # Requires:
 #   - docker
 #   - nvidia-docker
@@ -9,14 +9,11 @@
 #
 # Authors: Mohammed Abdelkader, mohamedashraf123@gmail.com
  
-DOCKER_REPO="mzahana/px4-ros-noetic-cuda11.4.2:latest"
-CONTAINER_NAME="px4_ros_noetic"
+DOCKER_REPO="mzahana/ros-noetic-cuda11.4.2:latest"
+CONTAINER_NAME="ros_noetic"
 WORKSPACE_DIR=~/${CONTAINER_NAME}_shared_volume
 CMD=""
 DOCKER_OPTS=
-
-# User name inside container
-USER_NAME=arrow
 
 # Get the current version of docker-ce
 # Strip leading stuff before the version number so it can be compared
