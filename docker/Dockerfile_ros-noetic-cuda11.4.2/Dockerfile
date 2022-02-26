@@ -76,6 +76,7 @@ RUN sh -c 'echo "deb http://packages.ros.org/ros/ubuntu `lsb_release -sc` main" 
 		ros-$ROS_DISTRO-rosunit \
         ros-$ROS_DISTRO-tf-conversions \
         ros-$ROS_DISTRO-rqt-tf-tree \
+		ros-$ROS_DISTRO-rviz \
 		xvfb \
 	&& geographiclib-get-geoids egm96-5 \
 	&& apt-get -y autoremove \
