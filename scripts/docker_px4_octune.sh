@@ -11,7 +11,8 @@
  
 DOCKER_REPO="mzahana/px4-ros-melodic-cuda10.1:latest"
 CONTAINER_NAME="px4_octune"
-WORKSPACE_DIR=~/${CONTAINER_NAME}_shared_volume
+SHARED_VOLUME_NAME="shared_volume"
+WORKSPACE_DIR=~/${CONTAINER_NAME}_${SHARED_VOLUME_NAME}
 CMD=""
 DOCKER_OPTS=
 
@@ -96,20 +97,26 @@ else
 
 echo "Starting Container: ${CONTAINER_NAME} with REPO: $DOCKER_REPO"
 
-# The following command clones surveillance_sim. It gets executed the first time the container is run
-# 
+
+ 
 if [ -z ${PERSONAL_GIT_TOKEN} ];then
     CLONE_PX4_OCTUNE="git clone https://github.com/mzahana/px4_octune_ros.git"
 else
     CLONE_PX4_OCTUNE="git clone https://$PERSONAL_GIT_TOKEN@github.com/mzahana/px4_octune_ros.git"
 fi
  CMD="export GIT_TOKEN=${PERSONAL_GIT_TOKEN} && export SUDO_PASS=arrow && \
-      cd \$HOME/catkin_ws/src && \
+      export OCTUNE_DIR=\$HOME/$SHARED_VOLUME_NAME && \
+      if [ ! -d "\$HOME/$SHARED_VOLUME_NAME/catkin_ws/" ]; then
+      mkdir -p \$HOME/$SHARED_VOLUME_NAME/catkin_ws/src
+      cd \$HOME/$SHARED_VOLUME_NAME/catkin_ws
+      catkin init && catkin config --cmake-args -DCMAKE_BUILD_TYPE=Release && catkin config --merge-devel && catkin config --extend /opt/ros/\$ROS_DISTRO && catkin build
+      fi && \
+      cd \$HOME/$SHARED_VOLUME_NAME/catkin_ws/src && \
       echo '-----------------------------' && echo && \
-      if [ ! -d "\$HOME/catkin_ws/src/px4_octune_ros" ]; then
+      if [ ! -d "\$HOME/$SHARED_VOLUME_NAME/catkin_ws/src/px4_octune_ros" ]; then
       $CLONE_PX4_OCTUNE
-      cd \$HOME/catkin_ws/src/px4_octune_ros && ./scripts/setup.sh
-      cd \$HOME/catkin_ws && catkin build
+      cd \$HOME/$SHARED_VOLUME_NAME/catkin_ws/src/px4_octune_ros && ./scripts/setup.sh
+      cd \$HOME/$SHARED_VOLUME_NAME/catkin_ws && catkin build
       fi && \
       source \$HOME/.bashrc && /bin/bash"
 
