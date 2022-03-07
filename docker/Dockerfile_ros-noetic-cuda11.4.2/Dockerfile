@@ -14,6 +14,8 @@ RUN wget --quiet http://packages.osrfoundation.org/gazebo.key -O - | apt-key add
 		ant \
 		binutils \
 		bc \
+		net-tools \
+		bash-completion \
 		dirmngr \
 		gazebo11 \
 		gstreamer1.0-plugins-bad \
