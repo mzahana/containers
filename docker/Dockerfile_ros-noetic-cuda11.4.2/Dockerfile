@@ -130,7 +130,7 @@ RUN apt install bash-completion
 RUN echo "source /etc/profile.d/bash_completion.sh" >> $HOME/.bashrc
 
 # create and start as LOCAL_USER_ID
-COPY ./scripts/entrypoint.sh /usr/local/bin/entrypoint.sh
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+# COPY ./scripts/entrypoint.sh /usr/local/bin/entrypoint.sh
+# ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
 CMD ["/bin/bash"]
