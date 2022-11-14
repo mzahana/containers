@@ -37,10 +37,10 @@ curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.li
 echo $pass | sudo -S apt-get update -y
 echo -e "${RED}Installing nvidia-docker2 ...${NC}"
 echo $pass | sudo -S apt-get install -y nvidia-docker2
-# echo $pass | sudo -S apt-get install -y nvidia-container-toolkit
+echo $pass | sudo -S apt-get install -y nvidia-container-toolkit
 
-# echo "Installing nvidia-container-runtime ..."
-# echo $pass | sudo -S apt-get install nvidia-container-runtime -y
+echo "Installing nvidia-container-runtime ..."
+echo $pass | sudo -S apt-get install nvidia-container-runtime -y
 
 echo -e "${RED}Restarting Docker daeomn...${NC}"
 echo $pass | sudo -S systemctl restart docker
