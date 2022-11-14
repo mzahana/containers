@@ -10,7 +10,7 @@ ENV DEBIAN_FRONTEND noninteractive
 # source catkin_ws inside .bashrc
 #
 RUN sed -i '/source ~\/catkin_ws\/devel\/setup.bash/d' $HOME/.bashrc && \
-    sed -i 's+source /opt/ros/melodic/setup.bash+source /opt/ros/melodic/setup.bash\nsource ~/catkin_ws/devel/setup.bash+g' $HOME/.bashrc
+    sed -i 's+source /opt/ros/noetic/setup.bash+source /opt/ros/noetic/setup.bash\nsource ~/catkin_ws/devel/setup.bash+g' $HOME/.bashrc
 
 #
 # Setting up PX4 Firmware, v1.13.1
