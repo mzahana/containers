@@ -32,6 +32,9 @@ RUN cd ${HOME}/PX4-Autopilot \
 
 # RUN DONT_RUN=1 make px4_sitl gazebo
 
+# Install xmlstarlet for Gazebo sdf models
+RUN apt install -y xmlstarlet
+
 #
 # Export neccessary env variables
 #
