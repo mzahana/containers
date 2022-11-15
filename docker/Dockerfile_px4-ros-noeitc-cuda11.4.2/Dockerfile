@@ -26,8 +26,10 @@ RUN if [ ! -d "${HOME}/PX4-Autopilot" ]; then \
 #
 RUN echo
 RUN cd ${HOME}/PX4-Autopilot \
-    && git checkout v1.13.1  \
-    && make clean && make distclean && DONT_RUN=1 make px4_sitl gazebo
+    && git checkout v1.11.2  \
+    && git submodule update --recursive \
+    && make clean && make distclean \
+    && DONT_RUN=1 make px4_sitl gazebo
     # && git submodule update --recursive
 
 # RUN DONT_RUN=1 make px4_sitl gazebo
