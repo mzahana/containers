@@ -44,3 +44,6 @@ RUN echo "source ~/PX4-Autopilot/Tools/setup_gazebo.bash ~/PX4-Autopilot ~/PX4-A
 RUN echo "export ROS_PACKAGE_PATH=\$ROS_PACKAGE_PATH:~/PX4-Autopilot" >> ${HOME}/.bashrc
 RUN echo "export ROS_PACKAGE_PATH=\$ROS_PACKAGE_PATH:~/PX4-Autopilot/Tools/sitl_gazebo" >> ${HOME}/.bashrc
 RUN echo "export GAZEBO_PLUGIN_PATH=\$GAZEBO_PLUGIN_PATH:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins" >> ${HOME}/.bashrc
+
+RUN echo "alias vsc='code --no-sandbox --user-data-dir /root'" >> ${HOME}/.bashrc
+RUN echo "alias wscode='code --no-sandbox --user-data-dir /root /root/catkin_ws/src'" >> ${HOME}/.bashrc
